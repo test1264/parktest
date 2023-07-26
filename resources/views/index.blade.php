@@ -21,7 +21,14 @@
                 <td class="col-1 text-center">
                     <a href="{{ route('client.edit', $clientcar->id_client) }}"><i class="bi bi-pencil-square fs-3"></i></a>
                 </td>
-                <td class="col-1  text-center"><i class="bi bi-x-square fs-3"></i></td>
+                <td class="col-1  text-center">
+                    <form action="{{ route('car.destroy', $clientcar->id_car) }}" method="post" class="form">
+                        @csrf
+                        @method('delete')
+                        <button type="submit"><i class="bi bi-x-square fs-3"></i></button>
+                    </form>
+                </td>
+                
             </tr>
             @endforeach
         </table>
