@@ -14,7 +14,7 @@
         <h2>Все клиенты</h2>
         <div>
             <a class="btn btn-outline-primary" href="{{ route('client.create') }}">Добавить клиента</a>
-            <a class="btn btn-outline-primary">Просмотр Автомобилей на стоянке</a>
+            <a class="btn btn-outline-primary" href="/list">Просмотр Автомобилей на стоянке</a>
         </div>
         <table class="table table-bordered table-striped">
             @foreach ($clientcars as $clientcar)

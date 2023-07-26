@@ -15,9 +15,13 @@ use App\Http\Controllers\CarController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', [ClientController::class, 'index']);
 
 Route::resource('/client', ClientController::class);
 Route::resource('/car', CarController::class);
+
+Route::get('/list', [ClientController::class, 'list']);
+
+Route::patch('/updateList', [CarController::class, 'updateList']);
+
+Route::get('/getCars/{id}', [CarController::class, 'getCars']);

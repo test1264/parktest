@@ -47,7 +47,7 @@ class ClientController extends Controller
         ]);
 
         $now = new DateTime();
-        echo $now->format('Y-m-d H:i:s'); // MySQL datetime format
+        echo $now->format('Y-m-d H:i:s');
         echo $now->getTimestamp(); 
 
         $id_car = DB::table('cars')->insertGetId([
@@ -103,5 +103,26 @@ class ClientController extends Controller
         return redirect()
             ->route('client.index')
             ->with('success', 'Client updated');
+    }
+
+    public function list() {   
+        $clientcarspark = DB::table('clientcar')
+            ->select('clientcar.id_client','clientcar.id_car','clients.name','cars.brand','cars.model','cars.number', 'cars.color', 'cars.is_parked', 'cars.parked_at')
+            ->join('clients','clients.id','=','clientcar.id_client')
+            ->join('cars','cars.id','=','clientcar.id_car')
+            ->where('cars.is_parked', '1')
+            ->paginate(4);
+
+        $clientcars = DB::table('clientcar')
+            ->select('clientcar.id_client','clients.name')
+            ->join('clients','clients.id','=','clientcar.id_client')
+            ->join('cars','cars.id','=','clientcar.id_car')
+            ->groupBy('clientcar.id_client')
+            ->get();
+
+        return view('list',[
+                'clientcarspark' => $clientcarspark,
+                'clientcars' => $clientcars
+            ]); 
     }
 }

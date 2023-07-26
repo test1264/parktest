@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use \DateTime;
+use \DateTimeZone;
 
 class CarController extends Controller
 {
@@ -17,8 +18,12 @@ class CarController extends Controller
         ]);
 
         $now = new DateTime();
-        echo $now->format('Y-m-d H:i:s'); // MySQL datetime format
-        echo $now->getTimestamp(); 
+        $now->format('Y-m-d H:i:s');
+
+        $timezone = new DateTimeZone('Europe/Moscow');
+        $now->setTimezone($timezone);
+
+        $now->getTimestamp(); 
 
         $id_car = DB::table('cars')->insertGetId([
             'brand' => $request->brand,
@@ -93,5 +98,39 @@ class CarController extends Controller
         return redirect()
             ->route('client.index')
             ->with('success','Car deleted');
+    }
+
+    public function updateList(Request $request) {
+
+        if($request->parkCheck == 1) {
+            
+            $parked_at = new DateTime();
+            $parked_at->format('Y-m-d H:i:s'); // MySQL datetime format
+
+            $timezone = new DateTimeZone('Europe/Moscow');
+            $parked_at->setTimezone($timezone);
+
+            $parked_at->getTimestamp();
+        }
+
+        DB::table('cars')
+                ->where('id', $request->carSelect)
+                ->update([
+                    'is_parked' => $request->parkCheck,
+                    'parked_at' => $parked_at
+                ]);
+
+        return redirect()
+            ->route('client.index');
+    }
+
+    public function getCars($clientId) {
+        $cars = DB::table('clientcar')
+                ->select('clientcar.id_car', 'cars.brand', 'cars.model', 'cars.is_parked')
+                ->join('cars','cars.id','=','clientcar.id_car')
+                ->where(['clientcar.id_client' => $clientId])
+                ->get();
+
+        echo $cars;
     }
 }
