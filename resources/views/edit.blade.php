@@ -35,7 +35,9 @@
 
         <h3>Автомобили клиента</h3>
         @foreach ($clientcars as $clientcar)
-            <form class="form w-50 p-3">
+            <form action="{{ route('car.update', $clientcar->id_car) }}" method="post" class="form w-50 p-3">
+                @csrf
+                @method('patch')
                 <label for="brand">Марка</label>
                 <input type="text" class="form-control" name="brand" value="{{ $clientcar->brand }}">
                 <label for="model">Модель</label>

@@ -9,23 +9,23 @@ class CarController extends Controller
 {
     public function update(Request $request, $id) {
         $request->validate([
-            'name' => 'required',
-            'sex' => 'required',
-            'phone' => 'required',
-            'address' => 'required'
+            'brand' => 'required',
+            'model' => 'required',
+            'color' => 'required',
+            'number' => 'required'
         ]);
 
-        DB::table('clients')
+        DB::table('cars')
                 ->where('id', $id)
                 ->update([
-                    'name' => $request->name,
-                    'sex' => $request->sex,
-                    'phone' => $request->phone,
-                    'address' => $request->address
+                    'brand' => $request->brand,
+                    'model' => $request->model,
+                    'color' => $request->color,
+                    'number' => $request->number
                 ]);
 
         return redirect()
             ->route('client.index')
-            ->with('success', 'Client updated');
+            ->with('success', 'Car updated');
     }
 }
