@@ -1,3 +1,5 @@
+<?php $clientcar = $clientcars[0]?>
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -11,20 +13,56 @@
 <body class="antialiased">
 
     <div class="container">
-        <h2>Клиент</h2>
-        <table class="table table-bordered table-striped">
-            @foreach ($clientcars as $clientcar)
-            <tr>
-                <td class="col-4">{{ $clientcar->name }}</td>
-                <td class="col-3">{{ $clientcar->brand }} {{ $clientcar->model }}</td>
-                <td class="col-3">{{ $clientcar->id_client }}</td>
-                <td class="col-1 text-center">
-                    <a href="{{ route('client.edit', $clientcar->id_client) }}"><i class="bi bi-pencil-square fs-3"></i></a>
-                </td>
-                <td class="col-1  text-center"><i class="bi bi-x-square fs-3"></i></td>
-            </tr>
-            @endforeach
-        </table>
+        <h2>Редактирование клиента</h2>
+        <h3>Клиент</h3>
+        <form action="{{ route('client.update', $clientcar->id_client) }}" method="post" class="form w-50 p-3">
+            @csrf
+            @method('patch')
+            <label for="name">ФИО</label>
+            <input type="text" class="form-control" name="name" value="{{ $clientcar->name }}">
+            <label for="sex">Пол:</label> 
+            <select class="form-select" name="sex">
+                <option <?php echo $clientcar->sex === 'Мужской' ? 'selected' : '' ?> value="Мужской">Мужской</option>
+                <option <?php echo $clientcar->sex === 'Женский' ? 'selected' : '' ?> value="Женский">Женский</option>
+            </select>
+            <label for="phone">Номер телефона</label>
+            <input type="text" class="form-control" name="phone" value="{{ $clientcar->phone }}">
+            <label for="address">Адрес</label>
+            <input type="text" class="form-control" name="address" value="{{ $clientcar->address }}">
+
+            <button type="submit" class="btn btn-outline-primary m-3">Сохранить</button>
+        </form>
+
+        <h3>Автомобили клиента</h3>
+        @foreach ($clientcars as $clientcar)
+            <form class="form w-50 p-3">
+                <label for="brand">Марка</label>
+                <input type="text" class="form-control" name="brand" value="{{ $clientcar->brand }}">
+                <label for="model">Модель</label>
+                <input type="text" class="form-control" name="model" value="{{ $clientcar->model }}">
+                <label for="color">Цвет кузова</label>
+                <input type="text" class="form-control" name="color" value="{{ $clientcar->color }}">
+                <label for="number">Регистрационный номер</label>
+                <input type="text" class="form-control" name="number" value="{{ $clientcar->number }}">
+                
+                <button type="submit" class="btn btn-outline-primary m-3">Сохранить</button>
+            </form>
+        @endforeach
+        
+
+        <h3>Добавить автомобиль</h3>
+        <form class="form w-50 p-3">
+            <label for="brand">Марка</label>
+            <input type="text" class="form-control" name="brand">
+            <label for="model">Модель</label>
+            <input type="text" class="form-control" name="model">
+            <label for="color">Цвет кузова</label>
+            <input type="text" class="form-control" name="color">
+            <label for="number">Регистрационный номер</label>
+            <input type="text" class="form-control" name="number">
+            
+            <button type="submit" class="btn btn-outline-primary m-3">Добавить</button>
+        </form>
     </div>
  
 </body>

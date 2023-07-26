@@ -15,29 +15,19 @@ class ClientController extends Controller
             ->join('cars','cars.id','=','clientcar.id_car')
             ->paginate(2);
 
-
-        // return view('index',[
-        //     'clients' => DB::table('clients')
-        //     ->get()
-        // ]); 
-
         return view('index',[
                 'clientcars' => $clientcars
             ]); 
 
-//         DB::table('users')
-// ->select('users.id','users.name','profiles.photo')
-// ->join('profiles','profiles.id','=','users.id')
-// ->where(['something' => 'something', 'otherThing' => 'otherThing'])
-// ->get();
     }
 
     public function edit($id) {
-        //$clientcars = DB::table('countries')->find($id);
         $clientcars = DB::table('clientcar')
-            ->select('clientcar.id_client','clientcar.id_car','clients.name','cars.brand','cars.model','cars.number')
-            ->join('clients','clients.id','=','clientcar.id_client')
-            ->join('cars','cars.id','=','clientcar.id_car')
+            ->select('clientcar.id_client', 'clientcar.id_car',
+                'clients.name', 'clients.sex', 'clients.phone', 'clients.address',
+                'cars.brand', 'cars.model', 'cars.color', 'cars.number')
+            ->join('clients', 'clients.id', '=', 'clientcar.id_client')
+            ->join('cars', 'cars.id', '=', 'clientcar.id_car')
             ->where(['clients.id' => $id])
             ->get();
 
@@ -48,17 +38,23 @@ class ClientController extends Controller
 
     public function update(Request $request, $id) {
         $request->validate([
-            'name' => 'required'
+            'name' => 'required',
+            'sex' => 'required',
+            'phone' => 'required',
+            'address' => 'required'
         ]);
 
-        DB::table('countries')
-                ->where('id',$id)
+        DB::table('clients')
+                ->where('id', $id)
                 ->update([
-                    'name' => $request->name
+                    'name' => $request->name,
+                    'sex' => $request->sex,
+                    'phone' => $request->phone,
+                    'address' => $request->address
                 ]);
 
         return redirect()
-            ->route('country.index')
-            ->with('success','Country updated');
+            ->route('client.index')
+            ->with('success', 'Client updated');
     }
 }
