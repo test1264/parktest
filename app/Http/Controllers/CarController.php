@@ -9,12 +9,13 @@ use \DateTimeZone;
 
 class CarController extends Controller
 {
+    // вставка записи о новом автомобиле
     public function store(Request $request) {
         $request->validate([
             'brand' => 'required',
             'model' => 'required',
             'color' => 'required',
-            'number' => 'required'
+            'number' => 'required|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
         ]);
 
         $now = new DateTime();
@@ -43,12 +44,13 @@ class CarController extends Controller
             ->route('client.index');
     }
 
+    // редактирование данных об автомобиле
     public function update(Request $request, $id) {
         $request->validate([
             'brand' => 'required',
             'model' => 'required',
             'color' => 'required',
-            'number' => 'required'
+            'number' => 'required|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
         ]);
 
         DB::table('cars')
@@ -65,6 +67,7 @@ class CarController extends Controller
             ->with('success', 'Car updated');
     }
 
+    // удаление автомобиля из базы
     public function destroy($id) {
         // получение списка автомобилей клиента
         // если удаляется единственный автомобиль - удалить клиента
@@ -100,12 +103,17 @@ class CarController extends Controller
             ->with('success','Car deleted');
     }
 
+    // обновление флага нахождения автомобиля на стоянке, установка нового времени с начала стоянки автомобиля
     public function updateList(Request $request) {
 
+        // если автомобиль убран со стоянки
+        $parked_at = new DateTime('0-1-1 0:0:0');
+
+        // если автомобиль поставлен на стоянку
         if($request->parkCheck == 1) {
             
             $parked_at = new DateTime();
-            $parked_at->format('Y-m-d H:i:s'); // MySQL datetime format
+            $parked_at->format('Y-m-d H:i:s');
 
             $timezone = new DateTimeZone('Europe/Moscow');
             $parked_at->setTimezone($timezone);
@@ -124,6 +132,7 @@ class CarController extends Controller
             ->route('client.index');
     }
 
+    // получение спика автомобилей, принадлежащих клиенту clientId
     public function getCars($clientId) {
         $cars = DB::table('clientcar')
                 ->select('clientcar.id_car', 'cars.brand', 'cars.model', 'cars.is_parked')

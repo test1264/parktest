@@ -6,9 +6,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use \Datetime;
+use \DateTimeZone;
 
 class ClientController extends Controller
 {
+    // страница со всеми клиентами и автомобилями
     public function index() {   
         $clientcars = DB::table('clientcar')
             ->select('clientcar.id_client','clientcar.id_car','clients.name','cars.brand','cars.model','cars.number')
@@ -19,26 +21,29 @@ class ClientController extends Controller
         return view('index',[
                 'clientcars' => $clientcars
             ]); 
-
     }
 
+    // страница создания нового клиента с автомобилем
     public function create() {
         return view('create');
     }
 
+    // вставка записи о новом клиенте и его автомобиле в базу
+    // происходит вставка в таблицу клиентов, автомобилей и в связующую таблицу клиент-автомобиль
     public function store(Request $request) {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|min:3',
             'sex' => 'required',
-            'phone' => 'required',
+            'phone' => 'required|min:11',
             'address' => 'required',
 
             'brand' => 'required',
             'model' => 'required',
             'color' => 'required',
-            'number' => 'required'
+            'number' => 'required|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
         ]);
 
+        // вставка в таблицу клиентов, с получением id-записи
         $id_client = DB::table('clients')->insertGetId([
             'name' => $request->name,
             'sex' => $request->sex,
@@ -47,9 +52,14 @@ class ClientController extends Controller
         ]);
 
         $now = new DateTime();
-        echo $now->format('Y-m-d H:i:s');
-        echo $now->getTimestamp(); 
+        $now->format('Y-m-d H:i:s');
 
+        $timezone = new DateTimeZone('Europe/Moscow');
+        $now->setTimezone($timezone);
+
+        $now->getTimestamp(); 
+
+        // вставка в таблицу автомобилей, с получением id-записи
         $id_car = DB::table('cars')->insertGetId([
             'brand' => $request->brand,
             'model' => $request->model,
@@ -59,6 +69,7 @@ class ClientController extends Controller
             'parked_at' => $now
         ]);
 
+        // вставка в таблицу связующую клиент-автомобиль id новый записей
         DB::table('clientcar')->insert([
             'id_client' => $id_client,
             'id_car' => $id_car
@@ -68,6 +79,7 @@ class ClientController extends Controller
             ->route('client.index');
     }
 
+    // страница редактирования записи клиента
     public function edit($id) {
         $clientcars = DB::table('clientcar')
             ->select('clientcar.id_client', 'clientcar.id_car',
@@ -83,11 +95,12 @@ class ClientController extends Controller
         ]);
     }
 
+    // редактирование клиента
     public function update(Request $request, $id) {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|min:3',
             'sex' => 'required',
-            'phone' => 'required',
+            'phone' => 'required|min:11',
             'address' => 'required'
         ]);
 
@@ -105,7 +118,9 @@ class ClientController extends Controller
             ->with('success', 'Client updated');
     }
 
+    // страница со списком автомобилей на стоянке
     public function list() {   
+        // выборка информации о клиентах и автомобилях на стоянке
         $clientcarspark = DB::table('clientcar')
             ->select('clientcar.id_client','clientcar.id_car','clients.name','cars.brand','cars.model','cars.number', 'cars.color', 'cars.is_parked', 'cars.parked_at')
             ->join('clients','clients.id','=','clientcar.id_client')
@@ -113,6 +128,7 @@ class ClientController extends Controller
             ->where('cars.is_parked', '1')
             ->paginate(4);
 
+        // выборка информации обо всех клиентах без повторений для отображения в выпадающем списке
         $clientcars = DB::table('clientcar')
             ->select('clientcar.id_client','clients.name')
             ->join('clients','clients.id','=','clientcar.id_client')

@@ -2,10 +2,8 @@
     $now = new DateTime();
     $now->format('Y-m-d H:i:s');
 
-    $timezone = new DateTimeZone('Europe/Moscow');
-    $now->setTimezone($timezone);
-
     $now->getTimestamp();
+    $now->modify('+3 hour');
 ?>
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -29,6 +27,10 @@
                     <td class="col-2">{{ $clientcarpark->number }}</td>
                     <td class="col-4"><?php
                         $date2 = new DateTime($clientcarpark->parked_at);
+
+                        $timezone = new DateTimeZone('Europe/Moscow');
+                        $date2->setTimezone($timezone);
+
                         $interval = $now->diff($date2);
                         echo $interval->d." дней " . $interval->h." часов " . $interval->i." минут";
                     ?></td>
