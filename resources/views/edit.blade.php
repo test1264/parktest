@@ -11,13 +11,13 @@
 <body class="antialiased">
 
     <div class="container">
-        <h2>Все клиенты</h2>
+        <h2>Клиент</h2>
         <table class="table table-bordered table-striped">
             @foreach ($clientcars as $clientcar)
             <tr>
                 <td class="col-4">{{ $clientcar->name }}</td>
                 <td class="col-3">{{ $clientcar->brand }} {{ $clientcar->model }}</td>
-                <td class="col-3">{{ $clientcar->number }}</td>
+                <td class="col-3">{{ $clientcar->id_client }}</td>
                 <td class="col-1 text-center">
                     <a href="{{ route('client.edit', $clientcar->id_client) }}"><i class="bi bi-pencil-square fs-3"></i></a>
                 </td>
@@ -25,7 +25,6 @@
             </tr>
             @endforeach
         </table>
-        {{ $clientcars->links() }}
     </div>
  
 </body>

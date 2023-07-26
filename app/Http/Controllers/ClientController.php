@@ -8,13 +8,11 @@ use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
-    public function index()
-    {   
-        $clients = DB::table('clientcar')
+    public function index() {   
+        $clientcars = DB::table('clientcar')
             ->select('clientcar.id_client','clientcar.id_car','clients.name','cars.brand','cars.model','cars.number')
             ->join('clients','clients.id','=','clientcar.id_client')
             ->join('cars','cars.id','=','clientcar.id_car')
-            //->get();
             ->paginate(2);
 
 
@@ -24,7 +22,7 @@ class ClientController extends Controller
         // ]); 
 
         return view('index',[
-                'clients' => $clients
+                'clientcars' => $clientcars
             ]); 
 
 //         DB::table('users')
@@ -32,5 +30,35 @@ class ClientController extends Controller
 // ->join('profiles','profiles.id','=','users.id')
 // ->where(['something' => 'something', 'otherThing' => 'otherThing'])
 // ->get();
+    }
+
+    public function edit($id) {
+        //$clientcars = DB::table('countries')->find($id);
+        $clientcars = DB::table('clientcar')
+            ->select('clientcar.id_client','clientcar.id_car','clients.name','cars.brand','cars.model','cars.number')
+            ->join('clients','clients.id','=','clientcar.id_client')
+            ->join('cars','cars.id','=','clientcar.id_car')
+            ->where(['clients.id' => $id])
+            ->get();
+
+        return view('edit',[
+            'clientcars' => $clientcars
+        ]);
+    }
+
+    public function update(Request $request, $id) {
+        $request->validate([
+            'name' => 'required'
+        ]);
+
+        DB::table('countries')
+                ->where('id',$id)
+                ->update([
+                    'name' => $request->name
+                ]);
+
+        return redirect()
+            ->route('country.index')
+            ->with('success','Country updated');
     }
 }
