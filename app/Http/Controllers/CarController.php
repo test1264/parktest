@@ -4,9 +4,40 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use \DateTime;
 
 class CarController extends Controller
 {
+    public function store(Request $request) {
+        $request->validate([
+            'brand' => 'required',
+            'model' => 'required',
+            'color' => 'required',
+            'number' => 'required'
+        ]);
+
+        $now = new DateTime();
+        echo $now->format('Y-m-d H:i:s'); // MySQL datetime format
+        echo $now->getTimestamp(); 
+
+        $id_car = DB::table('cars')->insertGetId([
+            'brand' => $request->brand,
+            'model' => $request->model,
+            'color' => $request->color,
+            'number' => $request->number,
+            'is_parked' => 1,
+            'parked_at' => $now
+        ]);
+
+        DB::table('clientcar')->insert([
+            'id_client' => $request->id_client,
+            'id_car' => $id_car
+        ]);
+
+        return redirect()
+            ->route('client.index');
+    }
+
     public function update(Request $request, $id) {
         $request->validate([
             'brand' => 'required',
@@ -29,8 +60,7 @@ class CarController extends Controller
             ->with('success', 'Car updated');
     }
 
-    public function destroy($id)
-    {
+    public function destroy($id) {
         // получение списка автомобилей клиента
         // если удаляется единственный автомобиль - удалить клиента
 

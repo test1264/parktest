@@ -6,12 +6,16 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Все клиенты</title>
 </head>
 <body class="antialiased">
 
     <div class="container">
         <h2>Все клиенты</h2>
+        <div>
+            <a class="btn btn-outline-primary" href="{{ route('client.create') }}">Добавить клиента</a>
+            <a class="btn btn-outline-primary">Просмотр Автомобилей на стоянке</a>
+        </div>
         <table class="table table-bordered table-striped">
             @foreach ($clientcars as $clientcar)
             <tr>

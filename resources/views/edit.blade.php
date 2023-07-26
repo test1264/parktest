@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Редактирование клиента</title>
 </head>
 <body class="antialiased">
 
@@ -53,7 +53,9 @@
         
 
         <h3>Добавить автомобиль</h3>
-        <form class="form w-50 p-3">
+        <form action="{{ route('car.store') }}" method="post" class="form w-50 p-3">
+            @csrf
+
             <label for="brand">Марка</label>
             <input type="text" class="form-control" name="brand">
             <label for="model">Модель</label>
@@ -62,7 +64,9 @@
             <input type="text" class="form-control" name="color">
             <label for="number">Регистрационный номер</label>
             <input type="text" class="form-control" name="number">
-            
+
+            <input type="hidden" name="id_client" value="{{ $clientcar->id_client }}" />
+
             <button type="submit" class="btn btn-outline-primary m-3">Добавить</button>
         </form>
     </div>
