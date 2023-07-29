@@ -24,7 +24,7 @@ function fillCarList() {
                 
             document.getElementById('carSelect').innerHTML = output;
 
-            // создание ивента только после создания списка
+            // создание отслеживания только после создания списка
             document.getElementById('carSelect').addEventListener('click', fillCheck);
         }
     };

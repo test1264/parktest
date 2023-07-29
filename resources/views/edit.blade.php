@@ -1,5 +1,3 @@
-<?php $clientcar = $clientcars[0]?>
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -15,20 +13,20 @@
     <div class="container">
         <h2>Редактирование клиента</h2>
         <h3>Клиент</h3>
-        <form action="{{ route('client.update', $clientcar->id_client) }}" method="post" class="form w-50 p-3">
+        <form action="{{ route('client.update', $clientcars[0]->id_client) }}" method="post" class="form w-50 p-3">
             @csrf
             @method('patch')
             <label for="name">ФИО</label>
-            <input type="text" class="form-control" name="name" value="{{ $clientcar->name }}">
+            <input type="text" class="form-control" name="name" value="{{ $clientcars[0]->name }}">
             <label for="sex">Пол:</label> 
             <select class="form-select" name="sex">
-                <option <?php echo $clientcar->sex === 'Мужской' ? 'selected' : '' ?> value="Мужской">Мужской</option>
-                <option <?php echo $clientcar->sex === 'Женский' ? 'selected' : '' ?> value="Женский">Женский</option>
+                <option {{ ($clientcars[0]->sex === 'Мужской' ? 'selected' : '') }} value="Мужской">Мужской</option>
+                <option {{ ($clientcars[0]->sex === 'Женский' ? 'selected' : '') }} value="Женский">Женский</option>
             </select>
             <label for="phone">Номер телефона</label>
-            <input type="text" class="form-control" name="phone" value="{{ $clientcar->phone }}">
+            <input type="text" class="form-control" name="phone" value="{{ $clientcars[0]->phone }}">
             <label for="address">Адрес</label>
-            <input type="text" class="form-control" name="address" value="{{ $clientcar->address }}">
+            <input type="text" class="form-control" name="address" value="{{ $clientcars[0]->address }}">
 
             <button type="submit" class="btn btn-outline-primary m-3">Сохранить</button>
         </form>
