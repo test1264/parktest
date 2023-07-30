@@ -1,10 +1,10 @@
-<?php
+@php
     $now = new DateTime();
     $now->format('Y-m-d H:i:s');
 
     $now->getTimestamp();
     $now->modify('+3 hour');
-?>
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -25,7 +25,8 @@
                     <td class="col-3">{{ $clientcarpark->name }}</td>
                     <td class="col-3">{{ $clientcarpark->brand }} {{ $clientcarpark->model }}</td>
                     <td class="col-2">{{ $clientcarpark->number }}</td>
-                    <td class="col-4"><?php
+                    <td class="col-4">
+                        @php
                         $date2 = new DateTime($clientcarpark->parked_at);
 
                         $timezone = new DateTimeZone('Europe/Moscow');
@@ -33,7 +34,8 @@
 
                         $interval = $now->diff($date2);
                         echo $interval->d." дней " . $interval->h." часов " . $interval->i." минут";
-                    ?></td>
+                        @endphp
+                    </td>
                 </tr>
                 @endforeach
             </table>
