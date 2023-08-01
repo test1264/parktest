@@ -18,6 +18,7 @@ class CarController extends Controller
             'number' => 'required|unique:cars|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
         ]);
 
+        $data = $request->all();
         CarModel::store($request);
 
         return redirect()
@@ -31,9 +32,10 @@ class CarController extends Controller
             'model' => 'required',
             'color' => 'required',
             'number' => 'required|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
-        ]);        
+        ]);
 
-        CarModel::update($request, $id);
+        $data = $request->all();
+        CarModel::update($data, $id);
 
         return redirect()
             ->route('client.index')
@@ -53,7 +55,8 @@ class CarController extends Controller
     // обновление флага нахождения автомобиля на стоянке, установка нового времени с начала стоянки автомобиля
     public function updateList(Request $request) {
 
-        CarModel::updateList($request);
+        $data = $request->all();
+        CarModel::updateList($data);
 
         return redirect()
             ->route('client.index');

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ClientModel
@@ -19,17 +18,17 @@ class ClientModel
     }
 
     // добавление нового клиента
-    public static function store(Request $request) {
+    public static function store(array $data) {
         DB::insert(
             'INSERT INTO clients 
             (name, sex, phone, address)
             VALUES 
             (:name, :sex, :phone, :address)',
             [
-                'name' => $request->name,
-                'sex' => $request->sex,
-                'phone' => $request->phone,
-                'address' => $request->address
+                'name' => $data['name'],
+                'sex' => $data['sex'],
+                'phone' => $data['phone'],
+                'address' => $data['address']
                 ] 
         );
         $id = DB::getPdo()->lastInsertId();
@@ -52,23 +51,23 @@ class ClientModel
     }
 
     // редактирование информации о клиенте
-    public static function update(Request $request, $id) {
+    public static function update(array $data, $id) {
         DB::table('clients')
                 ->where('id', $id)
                 ->update([
-                    'name' => $request->name,
-                    'sex' => $request->sex,
-                    'phone' => $request->phone,
-                    'address' => $request->address
+                    'name' => $data['name'],
+                    'sex' => $data['sex'],
+                    'phone' => $data['phone'],
+                    'address' => $data['address']
                 ]);
 
         $curPhone = self::getPhone($id);
 
-        if($curPhone !== $request->phone) {
+        if($curPhone !== $data['phone']) {
             DB::table('clients')
                 ->where('id', $id)
                 ->update([
-                    'phone' => $request->phone
+                    'phone' => $data['phone']
                 ]);
         }
 

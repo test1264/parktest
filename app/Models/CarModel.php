@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CarModel
 {
-    public static function store(Request $request, $id_client = 0) {
+    public static function store(array $data, $id_client = 0) {
         // добавление записи об автомобиле в таблицу автомобилей
         DB::insert(
             'INSERT INTO cars 
@@ -15,10 +14,10 @@ class CarModel
             VALUES 
             (:brand, :model, :color, :number, 1, NOW())',
             [
-                'brand' => $request->brand,
-                'model' => $request->model,
-                'color' => $request->color,
-                'number' => $request->number
+                'brand' => $data['brand'],
+                'model' => $data['model'],
+                'color' => $data['color'],
+                'number' => $data['number']
                 ] 
         );
         $id_car = DB::getPdo()->lastInsertId();
@@ -26,7 +25,7 @@ class CarModel
         // $id_client используется в случах, когда $request не содержит значения $id_client
         // если в store не было передано значение $id_client, то используется значение из $request
         if($id_client === 0) {
-            $id_client = $request->id_client;
+            $id_client = $data['id_client'];
         }
 
         // добавление записи об автомобиле в таблицу клиент-автомобиль
@@ -43,22 +42,22 @@ class CarModel
     }
 
     // редактирование данных об автомобиле
-    public static function update(Request $request, $id) {
+    public static function update(array $data, $id) {
         DB::table('cars')
                 ->where('id', $id)
                 ->update([
-                    'brand' => $request->brand,
-                    'model' => $request->model,
-                    'color' => $request->color,
+                    'brand' => $data['brand'],
+                    'model' => $data['model'],
+                    'color' => $data['color'],
                 ]);
 
         $curNumber = self::getNumber($id);
 
-        if($curNumber !== $request->number) {
+        if($curNumber !== $data['number']) {
             DB::table('cars')
                 ->where('id', $id)
                 ->update([
-                    'number' => $request->number
+                    'number' => $data['number']
                 ]);
         }
     }
@@ -103,16 +102,16 @@ class CarModel
     }
 
     // обновление флага нахождения автомобиля на стоянке, установка нового времени с начала стоянки автомобиля
-    public static function updateList(Request $request) {
+    public static function updateList(array $data) {
 
         // если автомобиль убран со стоянки
-        if($request->parkCheck == 0) {
-            DB::update('UPDATE cars SET parked_at = "0000-01-01 0:00:00", is_parked = 0 WHERE id = ?', [$request->carSelect]);
+        if($data['parkCheck'] == 0) {
+            DB::update('UPDATE cars SET parked_at = "0000-01-01 0:00:00", is_parked = 0 WHERE id = ?', [$data['carSelect']]);
         }
 
         // если автомобиль поставлен на стоянку
-        if($request->parkCheck == 1) {
-            DB::update('UPDATE cars SET parked_at = NOW(), is_parked = 1 WHERE id = ?', [$request->carSelect]);
+        if($data['parkCheck'] == 1) {
+            DB::update('UPDATE cars SET parked_at = NOW(), is_parked = 1 WHERE id = ?', [$data['carSelect']]);
         }
     }
 

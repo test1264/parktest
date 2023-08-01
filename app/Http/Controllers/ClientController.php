@@ -44,10 +44,12 @@ class ClientController extends Controller
         ]);
 
         // добавление записи о клиенте в таблицу клиентов
-        $id_client = ClientModel::store($request);
+        $clientData = $request->only(['name', 'sex', 'phone', 'address']);
+        $id_client = ClientModel::store($clientData);
 
         // добавление записи об автомобиле в таблицу автомобилей и добавление записи в таблицу клиент-автомобиль
-        CarModel::store($request, $id_client);
+        $carData = $request->only(['brand', 'model', 'color', 'number']);
+        CarModel::store($carData, $id_client);
 
         return redirect()
             ->route('client.index');
@@ -76,7 +78,8 @@ class ClientController extends Controller
             'address' => 'required'
         ]);
         
-        ClientModel::update($request, $id);
+        $data = $request->all();
+        ClientModel::update($data, $id);
 
         return redirect()
             ->route('client.index')
