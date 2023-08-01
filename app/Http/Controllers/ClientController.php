@@ -34,13 +34,13 @@ class ClientController extends Controller
         $request->validate([
             'name' => 'required|min:3',
             'sex' => 'required',
-            'phone' => 'required|min:11',
+            'phone' => 'required|unique:clients|min:11',
             'address' => 'required',
 
             'brand' => 'required',
             'model' => 'required',
             'color' => 'required',
-            'number' => 'required|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
+            'number' => 'required|unique:cars|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
         ]);
 
         // вставка в таблицу клиентов, с получением id-записи
@@ -100,7 +100,7 @@ class ClientController extends Controller
         $request->validate([
             'name' => 'required|min:3',
             'sex' => 'required',
-            'phone' => 'required|min:11',
+            'phone' => 'required|unique:clients|min:11',
             'address' => 'required'
         ]);
 

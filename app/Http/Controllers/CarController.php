@@ -15,7 +15,7 @@ class CarController extends Controller
             'brand' => 'required',
             'model' => 'required',
             'color' => 'required',
-            'number' => 'required|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
+            'number' => 'required|unique:cars|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
         ]);
 
         $now = new DateTime();
@@ -50,7 +50,7 @@ class CarController extends Controller
             'brand' => 'required',
             'model' => 'required',
             'color' => 'required',
-            'number' => 'required|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
+            'number' => 'required|unique:cars|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
         ]);
 
         DB::table('cars')
