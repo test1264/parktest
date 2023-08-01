@@ -34,7 +34,11 @@ class ClientController extends Controller
         $request->validate([
             'name' => 'required|min:3',
             'sex' => 'required',
-            'phone' => 'required|unique:clients|min:11',
+            'phone' => [
+                'required', 
+                'unique:clients', 
+                'regex:/^(8|\+7){1}(8|9){1}[\d]{9}$/'
+            ],
             'address' => 'required',
 
             'brand' => 'required',
@@ -100,7 +104,11 @@ class ClientController extends Controller
         $request->validate([
             'name' => 'required|min:3',
             'sex' => 'required',
-            'phone' => 'required|unique:clients|min:11',
+            'phone' => [
+                'required', 
+                'unique:clients', 
+                'regex:/^(8|\+7){1}(8|9){1}[\d]{9}$/'
+            ],
             'address' => 'required'
         ]);
 
