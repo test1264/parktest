@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use \Datetime;
-use \DateTimeZone;
 
 class ClientController extends Controller
 {
@@ -48,36 +45,46 @@ class ClientController extends Controller
         ]);
 
         // вставка в таблицу клиентов, с получением id-записи
-        $id_client = DB::table('clients')->insertGetId([
-            'name' => $request->name,
-            'sex' => $request->sex,
-            'phone' => $request->phone,
-            'address' => $request->address
-        ]);
-
-        $now = new DateTime();
-        $now->format('Y-m-d H:i:s');
-
-        $timezone = new DateTimeZone('Europe/Moscow');
-        $now->setTimezone($timezone);
-
-        $now->getTimestamp(); 
+        DB::insert(
+            'INSERT INTO clients 
+            (name, sex, phone, address)
+            VALUES 
+            (:name, :sex, :phone, :address)',
+            [
+                'name' => $request->name,
+                'sex' => $request->sex,
+                'phone' => $request->phone,
+                'address' => $request->address
+                ] 
+        );
+        $id_client = DB::getPdo()->lastInsertId();
 
         // вставка в таблицу автомобилей, с получением id-записи
-        $id_car = DB::table('cars')->insertGetId([
-            'brand' => $request->brand,
-            'model' => $request->model,
-            'color' => $request->color,
-            'number' => $request->number,
-            'is_parked' => 1,
-            'parked_at' => $now
-        ]);
+        DB::insert(
+            'INSERT INTO cars 
+            (brand, model, color, number, is_parked, parked_at)
+            VALUES 
+            (:brand, :model, :color, :number, 1, NOW())',
+            [
+                'brand' => $request->brand,
+                'model' => $request->model,
+                'color' => $request->color,
+                'number' => $request->number
+                ] 
+        );
+        $id_car = DB::getPdo()->lastInsertId();
 
         // вставка в таблицу связующую клиент-автомобиль id новый записей
-        DB::table('clientcar')->insert([
-            'id_client' => $id_client,
-            'id_car' => $id_car
-        ]);
+        DB::insert(
+            'INSERT INTO clientcar 
+            (id_client, id_car)
+            VALUES 
+            (:id_client, :id_car)',
+            [
+                'id_client' => $id_client,
+                'id_car' => $id_car
+                ] 
+        );
 
         return redirect()
             ->route('client.index');

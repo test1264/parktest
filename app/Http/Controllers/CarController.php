@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use \DateTime;
-use \DateTimeZone;
 
 class CarController extends Controller
 {
@@ -18,27 +16,32 @@ class CarController extends Controller
             'number' => 'required|unique:cars|regex:/^[a-zA-Z][\d]{3}[a-zA-Z]{2}[\d]{2,3}$/'
         ]);
 
-        $now = new DateTime();
-        $now->format('Y-m-d H:i:s');
+        // добавление записи об автомобиле в таблицу автомобилей
+        DB::insert(
+            'INSERT INTO cars 
+            (brand, model, color, number, is_parked, parked_at)
+            VALUES 
+            (:brand, :model, :color, :number, 1, NOW())',
+            [
+                'brand' => $request->brand,
+                'model' => $request->model,
+                'color' => $request->color,
+                'number' => $request->number
+                ] 
+        );
+        $id_car = DB::getPdo()->lastInsertId();
 
-        $timezone = new DateTimeZone('Europe/Moscow');
-        $now->setTimezone($timezone);
-
-        $now->getTimestamp(); 
-
-        $id_car = DB::table('cars')->insertGetId([
-            'brand' => $request->brand,
-            'model' => $request->model,
-            'color' => $request->color,
-            'number' => $request->number,
-            'is_parked' => 1,
-            'parked_at' => $now
-        ]);
-
-        DB::table('clientcar')->insert([
-            'id_client' => $request->id_client,
-            'id_car' => $id_car
-        ]);
+        // добавление записи об автомобиле в таблицу клиент-автомобиль
+        DB::insert(
+            'INSERT INTO clientcar 
+            (id_client, id_car)
+            VALUES 
+            (:id_client, :id_car)',
+            [
+                'id_client' => $request->id_client,
+                'id_car' => $id_car
+                ] 
+        );
 
         return redirect()
             ->route('client.index');
@@ -107,26 +110,14 @@ class CarController extends Controller
     public function updateList(Request $request) {
 
         // если автомобиль убран со стоянки
-        $parked_at = new DateTime('0-1-1 0:0:0');
+        if($request->parkCheck == 0) {
+            DB::update('UPDATE cars SET parked_at = "0000-01-01 0:00:00", is_parked = 0 WHERE id = ?', [$request->carSelect]);
+        }
 
         // если автомобиль поставлен на стоянку
         if($request->parkCheck == 1) {
-            
-            $parked_at = new DateTime();
-            $parked_at->format('Y-m-d H:i:s');
-
-            $timezone = new DateTimeZone('Europe/Moscow');
-            $parked_at->setTimezone($timezone);
-
-            $parked_at->getTimestamp();
+            DB::update('UPDATE cars SET parked_at = NOW(), is_parked = 1 WHERE id = ?', [$request->carSelect]);
         }
-
-        DB::table('cars')
-                ->where('id', $request->carSelect)
-                ->update([
-                    'is_parked' => $request->parkCheck,
-                    'parked_at' => $parked_at
-                ]);
 
         return redirect()
             ->route('client.index');
