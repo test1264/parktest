@@ -19,7 +19,7 @@ class CarController extends Controller
         ]);
 
         $data = $request->all();
-        CarModel::store($request);
+        CarModel::store($data);
 
         return redirect()
             ->route('client.index');
@@ -35,7 +35,8 @@ class CarController extends Controller
         ]);
 
         $data = $request->all();
-        CarModel::update($data, $id);
+        $data['id'] = $id;
+        CarModel::update($data);
 
         return redirect()
             ->route('client.index')

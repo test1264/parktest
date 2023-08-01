@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 class CarModel
 {
-    public static function store(array $data, $id_client = 0) {
+    public static function store(array $data) {
         // добавление записи об автомобиле в таблицу автомобилей
         DB::insert(
             'INSERT INTO cars 
@@ -22,12 +22,6 @@ class CarModel
         );
         $id_car = DB::getPdo()->lastInsertId();
 
-        // $id_client используется в случах, когда $request не содержит значения $id_client
-        // если в store не было передано значение $id_client, то используется значение из $request
-        if($id_client === 0) {
-            $id_client = $data['id_client'];
-        }
-
         // добавление записи об автомобиле в таблицу клиент-автомобиль
         DB::insert(
             'INSERT INTO clientcar 
@@ -35,27 +29,27 @@ class CarModel
             VALUES 
             (:id_client, :id_car)',
             [
-                'id_client' => $id_client,
+                'id_client' => $data['id_client'],
                 'id_car' => $id_car
                 ] 
         );
     }
 
     // редактирование данных об автомобиле
-    public static function update(array $data, $id) {
+    public static function update(array $data) {
         DB::table('cars')
-                ->where('id', $id)
-                ->update([
-                    'brand' => $data['brand'],
-                    'model' => $data['model'],
-                    'color' => $data['color'],
-                ]);
+            ->where('id', $data['id'])
+            ->update([
+                'brand' => $data['brand'],
+                'model' => $data['model'],
+                'color' => $data['color'],
+            ]);
 
-        $curNumber = self::getNumber($id);
+        $curNumber = self::getNumber($data['id']);
 
         if($curNumber !== $data['number']) {
             DB::table('cars')
-                ->where('id', $id)
+                ->where('id', $data['id'])
                 ->update([
                     'number' => $data['number']
                 ]);

@@ -49,7 +49,8 @@ class ClientController extends Controller
 
         // добавление записи об автомобиле в таблицу автомобилей и добавление записи в таблицу клиент-автомобиль
         $carData = $request->only(['brand', 'model', 'color', 'number']);
-        CarModel::store($carData, $id_client);
+        $carData['id_client'] =  $id_client;
+        CarModel::store($carData);
 
         return redirect()
             ->route('client.index');
@@ -79,7 +80,8 @@ class ClientController extends Controller
         ]);
         
         $data = $request->all();
-        ClientModel::update($data, $id);
+        $data['id'] = $id;
+        ClientModel::update($data);
 
         return redirect()
             ->route('client.index')

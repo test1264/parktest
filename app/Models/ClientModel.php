@@ -51,9 +51,9 @@ class ClientModel
     }
 
     // редактирование информации о клиенте
-    public static function update(array $data, $id) {
+    public static function update(array $data) {
         DB::table('clients')
-                ->where('id', $id)
+                ->where('id', $data['id'])
                 ->update([
                     'name' => $data['name'],
                     'sex' => $data['sex'],
@@ -61,11 +61,11 @@ class ClientModel
                     'address' => $data['address']
                 ]);
 
-        $curPhone = self::getPhone($id);
+        $curPhone = self::getPhone($data['id']);
 
         if($curPhone !== $data['phone']) {
             DB::table('clients')
-                ->where('id', $id)
+                ->where('id', $data['id'])
                 ->update([
                     'phone' => $data['phone']
                 ]);
